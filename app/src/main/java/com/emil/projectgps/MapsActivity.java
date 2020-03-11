@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -60,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements
         GoogleMap.OnPolylineClickListener {
 
     private static final String TAG = "SearchActivity";
+    private static final int REQUEST_CODE = 101 ;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -105,6 +107,8 @@ public class MapsActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
 
         polylines = new ArrayList<>();
+       // Log.d(TAG, "Last location Lat: "+lastLocation.getLatitude());
+        //Log.d(TAG, "Last location Long : "+lastLocation.getLongitude());
 
         centerView();
         textSearch();
@@ -116,12 +120,22 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setOnPolylineClickListener(this);
 
+        mMap.setOnPolylineClickListener(this);
+        Log.d(TAG, "Is it granted?");
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
+            return;
+        }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission granted?");
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
-        }
+        } else  Log.d(TAG, "Permission not granted");
+
+
+
 
     }
 
@@ -154,7 +168,9 @@ public class MapsActivity extends FragmentActivity implements
                         event.getAction() == KeyEvent.ACTION_DOWN ||
                         event.getAction() == KeyEvent.KEYCODE_ENTER) {
                     // execute method for searching
+                    Log.d(TAG, "Before geolocate");
                     geoLocate();
+                    Log.d(TAG, "After geolocate");
                 }
 
                 return false;
@@ -165,13 +181,16 @@ public class MapsActivity extends FragmentActivity implements
 
     private void geoLocate() {
         String searchString = searchText.getText().toString();
+        Log.d(TAG, "Search string: "+searchString);
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
 
+
         // adds the found address to a list
         try {
             list = geocoder.getFromLocationName(searchString, 1);
+            Log.d(TAG, "Address list: "+list.get(0));
         } catch (IOException e) {
             Log.e(TAG, "geoLocate: IOException: " + e.getMessage());
         }
@@ -179,6 +198,8 @@ public class MapsActivity extends FragmentActivity implements
         // if there is an address found
         if (list.size() == 1) {
             Address address = list.get(0);
+            Log.d(TAG, "Address Lat: "+address.getLatitude());
+            Log.d(TAG, "Address Long: "+address.getLongitude());
 
             //starts the move camera method and pass the lat/ long and the found address
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), address.getAddressLine(0));
@@ -206,6 +227,18 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    geoLocate();
+                }
+                break;
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
