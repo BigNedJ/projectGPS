@@ -29,6 +29,9 @@ dependencies {
     // route
     implementation 'com.github.jd-alexander:library:1.1.0'
 
+    // slide up menu
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
     //implementation 'com.google.maps:google-maps-services:0.11.0'
     //implementation 'org.slf4j:slf4j-simple:1.7.25'
 

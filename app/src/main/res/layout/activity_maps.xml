@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity"
+    app:umanoDragView="@id/dragview"
+    app:umanoScrollableView="@id/listView"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    app:umanoPanelHeight="68dp"
+    app:umanoOverlay="false"
+    app:umanoParallaxOffset="100dp"
+    app:umanoShadowHeight="4dp">
+
 
 <RelativeLayout
     android:layout_height="match_parent"
@@ -41,7 +57,7 @@
             android:layout_height="35dp"
             android:id="@+id/micImage"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="300dp"
+            android:layout_marginLeft="350dp"
             android:layout_marginRight="10dp"
             android:src="@drawable/ic_mic"/>
 
@@ -50,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="20dp"
             android:layout_toRightOf="@+id/magnifyImage"
             android:background="@null"
             android:hint="Search Location"
@@ -65,7 +81,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:id="@+id/centerImage"
-        android:layout_marginLeft="310dp"
+        android:layout_marginLeft="360dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="70dp"
         android:src="@drawable/ic_center" />
@@ -74,7 +90,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:id="@+id/clearRouteImage"
-        android:layout_marginLeft="310dp"
+        android:layout_marginLeft="360dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="110dp"
         android:onClick="clearRoute"
@@ -82,3 +98,40 @@
 
 </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dragview"
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:textSize="16sp"
+                android:text="Menu"
+                android:paddingStart="15dp"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/listView"
+            >
+
+
+        </ListView>
+
+
+    </LinearLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

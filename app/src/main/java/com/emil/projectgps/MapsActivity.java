@@ -1,6 +1,7 @@
 package com.emil.projectgps;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -15,8 +16,11 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.widget.AdapterView;
+
 
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
@@ -58,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         RoutingListener,
-        GoogleMap.OnPolylineClickListener {
+        GoogleMap.OnPolylineClickListener{
 
     private static final String TAG = "SearchActivity";
     private static final int REQUEST_CODE = 101 ;
@@ -81,6 +87,9 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView micImage;
     private ImageView centerImage;
     private ImageView clearRouteImage;
+
+    private String[] menuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
+    private ListView listView;
 
     private ArrayList<Route> routes;
 
@@ -113,9 +122,43 @@ public class MapsActivity extends FragmentActivity implements
         centerView();
         textSearch();
         getSpeechInput();
+        changeActivity();
     }
 
+    private void changeActivity() {
+        // submenu options
+        listView = findViewById(R.id.listView);
+        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                menuList));
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // Example to change activity
+                // startActivity(new Intent(getApplicationContext(),Login.class));
+                if (position == 0){
+                    // Add Friends
+                }
+                if (position == 1){
+                    // Chat With Friends
+                }
+                if (position == 2){
+                    // View Friends
+                }
+                if (position == 3){
+                    // Settings
+                }
+                if (position == 4){
+                    // About The App
+                }
+                if (position == 5){
+                    // Sign Out
+                }
+            }
+        });
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
