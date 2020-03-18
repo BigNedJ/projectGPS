@@ -125,6 +125,8 @@ public class MapsActivity extends FragmentActivity implements
         changeActivity();
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void changeActivity() {
         // submenu options
         listView = findViewById(R.id.listView);
@@ -177,9 +179,6 @@ public class MapsActivity extends FragmentActivity implements
             mMap.setMyLocationEnabled(true);
         } else  Log.d(TAG, "Permission not granted");
 
-
-
-
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +227,6 @@ public class MapsActivity extends FragmentActivity implements
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
-
 
         // adds the found address to a list
         try {
@@ -434,11 +432,11 @@ public class MapsActivity extends FragmentActivity implements
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
 
-
-            Toast.makeText(getApplicationContext(), "Route " + (i + 1) + "\n" + route.get(i).getDistanceText() +
-                            "\n" + route.get(i).getDurationText()
-                    , Toast.LENGTH_SHORT).show();
         }
+
+        Toast.makeText(getApplicationContext(), "Route " + 1 + "\n" + route.get(0).getDistanceText() +
+                        "\n" + route.get(0).getDurationText()
+                , Toast.LENGTH_SHORT).show();
 
     }
 
