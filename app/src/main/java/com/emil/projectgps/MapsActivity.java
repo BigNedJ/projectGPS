@@ -1,7 +1,6 @@
 package com.emil.projectgps;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -49,13 +48,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import android.widget.AdapterView;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -88,10 +87,15 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView centerImage;
     private ImageView clearRouteImage;
 
-    private String[] menuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
+    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
+    private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
+
     private ListView listView;
 
     private ArrayList<Route> routes;
+
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser currentUser;
 
 
     // TODO write comments on the last programming
@@ -104,6 +108,11 @@ public class MapsActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // submenu options
+        listView = findViewById(R.id.listView);
+        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                menuList));
 
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
@@ -118,6 +127,10 @@ public class MapsActivity extends FragmentActivity implements
         polylines = new ArrayList<>();
        // Log.d(TAG, "Last location Lat: "+lastLocation.getLatitude());
         //Log.d(TAG, "Last location Long : "+lastLocation.getLongitude());
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        if (firebaseAuth.getCurrentUser()!=null)
+        Log.d(TAG, "USer id: "+currentUser.getUid());
 
         centerView();
         textSearch();
@@ -125,11 +138,41 @@ public class MapsActivity extends FragmentActivity implements
         changeActivity();
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void changeActivity() {
+<<<<<<< HEAD
         // submenu options
         listView = findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                menuList));
+        if(firebaseAuth.getCurrentUser()!=null) {
+            listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                    loggedInMenuList));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // Example to change activity
+                    // startActivity(new Intent(getApplicationContext(),Login.class));
+                    if (position == 0){
+                        // Add Friends
+                    }
+                    if (position == 1){
+                        // Chat With Friends
+                    }
+                    if (position == 2){
+                        // View Friends
+                    }
+                    if (position == 3){
+                        // Settings
+                    }
+                    if (position == 4){
+                        // About The App
+                    }
+                    if (position == 5){
+                        // Sign Out
+                        firebaseAuth.signOut();
+                        startActivity(new Intent(getApplicationContext(),Login.class));
+                    }
+=======
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -144,18 +187,31 @@ public class MapsActivity extends FragmentActivity implements
                 }
                 if (position == 2){
                     // View Friends
+>>>>>>> 02ac36e9d4223f377c97c925f79f67ec90e2d6f9
                 }
-                if (position == 3){
-                    // Settings
+            });
+        }
+        else {
+            listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                    guestMenuList));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // Example to change activity
+                    // startActivity(new Intent(getApplicationContext(),Login.class));
+                    if (position == 0) {
+                        // Settings
+                    }
+                    if (position == 1) {
+                        // About the app
+                    }
+                    if (position == 2) {
+                        // Sign in
+                         startActivity(new Intent(getApplicationContext(),Login.class));
+                    }
                 }
-                if (position == 4){
-                    // About The App
-                }
-                if (position == 5){
-                    // Sign Out
-                }
-            }
-        });
+            });
+    }
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,9 +232,6 @@ public class MapsActivity extends FragmentActivity implements
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         } else  Log.d(TAG, "Permission not granted");
-
-
-
 
     }
 
@@ -228,7 +281,6 @@ public class MapsActivity extends FragmentActivity implements
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
-
 
         // adds the found address to a list
         try {
@@ -434,11 +486,11 @@ public class MapsActivity extends FragmentActivity implements
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
 
-
-            Toast.makeText(getApplicationContext(), "Route " + (i + 1) + "\n" + route.get(i).getDistanceText() +
-                            "\n" + route.get(i).getDurationText()
-                    , Toast.LENGTH_SHORT).show();
         }
+
+        Toast.makeText(getApplicationContext(), "Route " + 1 + "\n" + route.get(0).getDistanceText() +
+                        "\n" + route.get(0).getDurationText()
+                , Toast.LENGTH_SHORT).show();
 
     }
 
