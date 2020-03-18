@@ -142,6 +142,7 @@ public class MapsActivity extends FragmentActivity implements
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void changeActivity() {
 <<<<<<< HEAD
+<<<<<<< HEAD
         // submenu options
         listView = findViewById(R.id.listView);
         if(firebaseAuth.getCurrentUser()!=null) {
@@ -173,6 +174,8 @@ public class MapsActivity extends FragmentActivity implements
                         startActivity(new Intent(getApplicationContext(),Login.class));
                     }
 =======
+=======
+>>>>>>> 02ac36e9d4223f377c97c925f79f67ec90e2d6f9
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
