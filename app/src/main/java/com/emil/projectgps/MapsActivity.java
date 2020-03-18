@@ -105,6 +105,11 @@ public class MapsActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // submenu options
+        listView = findViewById(R.id.listView);
+        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                menuList));
+
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
         centerImage = (ImageView) findViewById(R.id.centerImage);
@@ -128,10 +133,6 @@ public class MapsActivity extends FragmentActivity implements
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void changeActivity() {
-        // submenu options
-        listView = findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                menuList));
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
