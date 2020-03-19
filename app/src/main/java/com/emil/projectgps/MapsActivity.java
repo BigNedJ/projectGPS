@@ -133,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements
 
 
 
-    private void changeActivity() {
+    public void changeActivity() {
         if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
             listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                     loggedInMenuList));
@@ -181,6 +181,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     if (position == 1) {
                         // About us
+                        startActivity(new Intent(getApplicationContext(),AboutUsActivity.class));
                     }
                     if (position == 2) {
                         // Sign in
