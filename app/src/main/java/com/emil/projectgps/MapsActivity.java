@@ -88,7 +88,8 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView centerImage;
     private ImageView clearRouteImage;
 
-    private String[] menuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
+    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
+    private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
     private ListView listView;
 
     private ArrayList<Route> routes;
@@ -108,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements
         // submenu options
         listView = findViewById(R.id.listView);
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                menuList));
+                loggedInMenuList));
 
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
@@ -131,37 +132,63 @@ public class MapsActivity extends FragmentActivity implements
     }
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private void changeActivity() {
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // Example to change activity
-                // startActivity(new Intent(getApplicationContext(),Login.class));
-                if (position == 0){
-                    // Add Friends
+    private void changeActivity() {
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                    loggedInMenuList));
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // Example to change activity
+                    // startActivity(new Intent(getApplicationContext(),Login.class));
+                    if (position == 0) {
+                        // Add Friends
+                    }
+                    if (position == 1) {
+                        // Chat With Friends
+                    }
+                    if (position == 2) {
+                        // View Friends
+                    }
+                    if (position == 3) {
+                        // Settings
+                    }
+                    if (position == 4) {
+                        // About The App
+                        startActivity(new Intent(getApplicationContext(), AboutUsActivity.class));
+                    }
+                    if (position == 5) {
+                        // Sign Out
+                        firebaseAuth.signOut();
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    }
                 }
-                if (position == 1){
-                    // Chat With Friends
+            });
+        } else {
+            listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                    guestMenuList));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    // Example to change activity
+                    // startActivity(new Intent(getApplicationContext(),Login.class));
+                    if (position == 0) {
+                        // Settings
+                    }
+                    if (position == 1) {
+                        // About us
+                    }
+                    if (position == 2) {
+                        // Sign in
+                        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                    }
                 }
-                if (position == 2){
-                    // View Friends
-                }
-                if (position == 3){
-                    // Settings
-                }
-                if (position == 4){
-                    // About The App
-                    startActivity(new Intent(getApplicationContext(),AboutUsActivity.class));
-                }
-                if (position == 5){
-                    // Sign Out
-                    firebaseAuth.signOut();
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                }
-            }
-        });
+            });
+
+
+        }
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
