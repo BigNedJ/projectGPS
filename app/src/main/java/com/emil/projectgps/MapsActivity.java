@@ -152,6 +152,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     if (position == 2) {
                         // View Friends
+                        startActivity(new Intent(getApplicationContext(),FriendList.class));
                     }
                     if (position == 3) {
                         // Settings
