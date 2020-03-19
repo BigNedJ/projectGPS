@@ -111,8 +111,6 @@ public class MapsActivity extends FragmentActivity implements
 
         // submenu options
         listView = findViewById(R.id.listView);
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-                menuList));
 
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
@@ -141,10 +139,9 @@ public class MapsActivity extends FragmentActivity implements
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void changeActivity() {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         // submenu options
-        listView = findViewById(R.id.listView);
+       // listView = findViewById(R.id.listView);
         if(firebaseAuth.getCurrentUser()!=null) {
             listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                     loggedInMenuList));
@@ -153,47 +150,32 @@ public class MapsActivity extends FragmentActivity implements
                                         int position, long id) {
                     // Example to change activity
                     // startActivity(new Intent(getApplicationContext(),Login.class));
-                    if (position == 0){
+                    if (position == 0) {
                         // Add Friends
                     }
-                    if (position == 1){
+                    if (position == 1) {
                         // Chat With Friends
                     }
-                    if (position == 2){
+                    if (position == 2) {
                         // View Friends
                     }
-                    if (position == 3){
+                    if (position == 3) {
                         // Settings
                     }
-                    if (position == 4){
+                    if (position == 4) {
                         // About The App
                     }
-                    if (position == 5){
+                    if (position == 5) {
                         // Sign Out
                         firebaseAuth.signOut();
-                        startActivity(new Intent(getApplicationContext(),Login.class));
+                        startActivity(new Intent(getApplicationContext(), Login.class));
                     }
-=======
-=======
->>>>>>> 02ac36e9d4223f377c97c925f79f67ec90e2d6f9
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // Example to change activity
-                // startActivity(new Intent(getApplicationContext(),Login.class));
-                if (position == 0){
-                    // Add Friends
-                }
-                if (position == 1){
-                    // Chat With Friends
-                }
-                if (position == 2){
-                    // View Friends
->>>>>>> 02ac36e9d4223f377c97c925f79f67ec90e2d6f9
                 }
             });
         }
+
+
+
         else {
             listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                     guestMenuList));
