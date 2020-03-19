@@ -105,8 +105,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                                 }
 
                             });
-
-<<<<<<< HEAD
+                            
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 
                         }else {

@@ -77,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(),MapsActivity.class));
 
                         }else {
-<<<<<<< HEAD:app/src/main/java/com/emil/projectgps/LoginActivity.java
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(LoginActivity.this,"Error: "+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                         }
