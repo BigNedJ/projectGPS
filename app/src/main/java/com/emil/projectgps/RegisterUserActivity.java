@@ -47,7 +47,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         btnRegister=(Button)findViewById(R.id.btnRegister);
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
         textView=(TextView)findViewById(R.id.textViewLogin);
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
 
         fAuth=FirebaseAuth.getInstance();
         fStore=FirebaseFirestore.getInstance();
@@ -107,7 +107,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.d(TAG,"onFailture: "+e.toString());
-                                    progressBar.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.INVISIBLE);
                                 }
 
                             });
@@ -117,9 +117,9 @@ public class RegisterUserActivity extends AppCompatActivity {
                         }else {
                             Log.d(TAG, "onSuccess: user Profile created for " + userID);
                             Toast.makeText(RegisterUserActivity.this,"Registration Failed: "+ task.getException().getMessage(),Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
-                        progressBar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
             }

@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         button=(Button)findViewById(R.id.btnLogin);
         textView=(TextView)findViewById(R.id.textViewRegister);
         progressBar=(ProgressBar)findViewById(R.id.progressBar2);
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
         firebaseAuth = FirebaseAuth.getInstance();
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
 
 
 
@@ -78,13 +78,13 @@ public class LoginActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.VISIBLE);
 
                         }else {
-                            progressBar.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.INVISIBLE);
                             Toast.makeText(LoginActivity.this,"Error: "+task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                         }
 
                     }
                 });
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
 
             }
         });
