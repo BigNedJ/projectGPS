@@ -161,8 +161,9 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     if (position == 5) {
                         // Sign Out
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                        firebaseAuth.signOut();
+                       FirebaseAuth.getInstance().signOut();
+                       finish();
+                       startActivity(new Intent(getApplicationContext(),LoginActivity.class));
                     }
                 }
             });
