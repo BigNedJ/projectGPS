@@ -62,6 +62,8 @@ public class RegisterUserActivity extends AppCompatActivity {
                 final String mail=email.getText().toString().trim();
                 String lösenord=password.getText().toString().trim();
                 final String mUsername=userName.getText().toString().trim();
+                final String mlat=null;
+                final String mlong=null;
 
                 if (TextUtils.isEmpty(mail)){
                     email.setError("Email is required.");
@@ -89,6 +91,8 @@ public class RegisterUserActivity extends AppCompatActivity {
                             final Map<String,Object> user=new HashMap<>();
                             user.put("Username",mUsername);
                             user.put("Email",mail);
+                            user.put("lat",mlat);
+                            user.put("long",mlong);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -105,7 +109,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                                 }
 
                             });
-                            
+
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 
                         }else {

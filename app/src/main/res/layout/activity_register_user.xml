@@ -9,6 +9,19 @@
     android:background="@drawable/gradient">
 
     <TextView
+        android:id="@+id/longTextView"
+        android:layout_width="91dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="214dp"
+        android:layout_marginBottom="286dp"
+        android:clickable="false"
+        android:duplicateParentState="false"
+        android:editable="false"
+        android:text="long" />
+
+    <TextView
         android:id="@+id/textView3"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
@@ -57,16 +70,17 @@
         android:inputType="textPassword" />
 
 
-
     <Button
         android:id="@+id/btnRegister"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/password"
-        android:layout_marginTop="20dp"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_below="@id/password"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="131dp"
+        android:layout_marginTop="153dp"
+        android:layout_marginEnd="130dp"
         android:text="Register" />
-
 
     <TextView
         android:id="@+id/textViewLogin"
@@ -85,5 +99,19 @@
         android:layout_marginTop="40dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/textViewLogin"/>
+
+    <TextView
+        android:id="@+id/latTextView"
+        android:layout_width="91dp"
+        android:layout_height="42dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="215dp"
+        android:layout_marginBottom="334dp"
+        android:clickable="false"
+        android:duplicateParentState="false"
+        android:editable="false"
+        android:text="lat"
+        android:visibility="visible" />
 
 </RelativeLayout>
