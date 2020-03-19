@@ -145,6 +145,7 @@ public class MapsActivity extends FragmentActivity implements
                     // startActivity(new Intent(getApplicationContext(),Login.class));
                     if (position == 0) {
                         // Add Friends
+                        startActivity(new Intent(getApplicationContext(),AddNewFriend.class));
                     }
                     if (position == 1) {
                         // Chat With Friends

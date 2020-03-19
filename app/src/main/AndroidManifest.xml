@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".AboutUsActivity"></activity>
+        <activity android:name=".AddNewFriend"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterUserActivity" />
         <!--
