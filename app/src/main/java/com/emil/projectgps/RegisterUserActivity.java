@@ -47,6 +47,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         btnRegister=(Button)findViewById(R.id.btnRegister);
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
         textView=(TextView)findViewById(R.id.textViewLogin);
+        progressBar.setVisibility(View.GONE);
 
         fAuth=FirebaseAuth.getInstance();
         fStore=FirebaseFirestore.getInstance();
@@ -84,6 +85,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isComplete()){
+                            progressBar.setVisibility(View.VISIBLE);
                             Log.d(TAG, "User registered");
                             Toast.makeText(RegisterUserActivity.this,"User Registered",Toast.LENGTH_SHORT).show();
                             userID=fAuth.getCurrentUser().getUid();
@@ -98,7 +100,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "onSuccess: user Profile created for " + userID);
-                                    progressBar.setVisibility(View.GONE);
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
 
