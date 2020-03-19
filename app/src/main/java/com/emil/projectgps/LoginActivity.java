@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         button=(Button)findViewById(R.id.btnLogin);
         textView=(TextView)findViewById(R.id.textViewRegister);
         progressBar=(ProgressBar)findViewById(R.id.progressBar2);
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.GONE);
         firebaseAuth = FirebaseAuth.getInstance();
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
 
 
 
@@ -75,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
                             Toast.makeText(LoginActivity.this,"Successful Login",Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+                            progressBar.setVisibility(View.VISIBLE);
 
                         }else {
                             progressBar.setVisibility(View.GONE);
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
+                progressBar.setVisibility(View.GONE);
 
             }
         });
