@@ -65,6 +65,7 @@ public class RegisterUserActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(mail)){
                     email.setError("Email is required.");
+                   // return;
                 }
                 if (TextUtils.isEmpty(lösenord)){
                     password.setError("Password is required.");
@@ -76,12 +77,12 @@ public class RegisterUserActivity extends AppCompatActivity {
                     password.setError("Password must be at least 6 chars");
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
 
                 fAuth.createUserWithEmailAndPassword(mail,lösenord).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+                        if (task.isComplete()){
+                            Log.d(TAG, "User registered");
                             Toast.makeText(RegisterUserActivity.this,"User Registered",Toast.LENGTH_SHORT).show();
                             userID=fAuth.getCurrentUser().getUid();
                             DocumentReference documentReference=fStore.collection("users").document(userID);
@@ -93,19 +94,23 @@ public class RegisterUserActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d(TAG, "onSuccess: user Profile created for " + userID);
+                                    progressBar.setVisibility(View.GONE);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
 
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Log.d(TAG,"onFailture: "+e.toString());
+                                    progressBar.setVisibility(View.GONE);
                                 }
 
                             });
 
+<<<<<<< HEAD
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 
                         }else {
+                            Log.d(TAG, "onSuccess: user Profile created for " + userID);
                             Toast.makeText(RegisterUserActivity.this,"Registration Failed: "+ task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
                         }
