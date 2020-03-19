@@ -1,7 +1,6 @@
 package com.emil.projectgps;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -49,13 +48,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import android.widget.AdapterView;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -68,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements
 
     private static final String TAG = "SearchActivity";
     private static final int REQUEST_CODE = 101 ;
+
+    FirebaseAuth firebaseAuth;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -153,9 +153,12 @@ public class MapsActivity extends FragmentActivity implements
                 }
                 if (position == 4){
                     // About The App
+                    startActivity(new Intent(getApplicationContext(),AboutUsActivity.class));
                 }
                 if (position == 5){
                     // Sign Out
+                    firebaseAuth.signOut();
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 }
             }
         });

@@ -52,7 +52,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         fStore=FirebaseFirestore.getInstance();
 
         if (fAuth.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(),Login.class));
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
         }
 
@@ -103,7 +103,7 @@ public class RegisterUserActivity extends AppCompatActivity {
 
                             });
 
-                            startActivity(new Intent(getApplicationContext(),Login.class));
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 
                         }else {
                             Toast.makeText(RegisterUserActivity.this,"Registration Failed: "+ task.getException().getMessage(),Toast.LENGTH_SHORT).show();
@@ -117,7 +117,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),Login.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
         });
     }
