@@ -1,6 +1,7 @@
 package com.emil.projectgps;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -131,6 +133,13 @@ public class MapsActivity extends FragmentActivity implements
         changeActivity();
     }
 
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
 
     public void changeActivity() {
@@ -190,7 +199,6 @@ public class MapsActivity extends FragmentActivity implements
                     }
                 }
             });
-
 
         }
     }
@@ -350,6 +358,8 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        // closes the keyboard on start. may be moved to another place
+        closeKeyboard();
 
         lastLocation = location;
 
@@ -359,11 +369,10 @@ public class MapsActivity extends FragmentActivity implements
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-
         //TODO make camera work on start up (inti zoom)
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(8.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(6.0f));
 
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);

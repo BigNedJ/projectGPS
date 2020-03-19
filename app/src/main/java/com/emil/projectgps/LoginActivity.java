@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText mEmail,mPassword;
     Button button;
-    Button btnGuest;
+    TextView btnGuest;
     TextView textView;
     ProgressBar progressBar;
     FirebaseAuth firebaseAuth;
@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         mEmail=(EditText)findViewById(R.id.email);
         mPassword=(EditText)findViewById(R.id.password);
         button=(Button)findViewById(R.id.btnLogin);
-        btnGuest=(Button)findViewById(R.id.guestLogin);
+        btnGuest=(TextView) findViewById(R.id.guestLogin);
         textView=(TextView)findViewById(R.id.textViewRegister);
         progressBar=(ProgressBar)findViewById(R.id.progressBar2);
         progressBar.setVisibility(View.INVISIBLE);

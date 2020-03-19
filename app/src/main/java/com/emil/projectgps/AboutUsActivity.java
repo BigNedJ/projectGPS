@@ -30,10 +30,10 @@ public class AboutUsActivity extends AppCompatActivity {
         textViewAboutUs.setText("This application was created by five students at HKR (Högskolan Kristianstad)." +
                 "The idea of this this app is a mix of two applications, Snapchat/Google Maps, where the user " +
                 "will be able to view the map and chat with friends. There will be a menu where you can " +
-                "access the Add Friends, View Friends, About the App och sign out activities." +
-                "" +
+                "access the Add Friends, View Friends, About the App and sign out activities." +
+                "\n\n" +
                 "We hope that you like our application called PseudoMaps," +
-                "\n Greetings " +
+                "\n\n\nGreetings\n\n" +
                 "Nedim, Bamlak, Emil, Jimmie and Petar");
 
     }
