@@ -43,8 +43,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -197,6 +199,10 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.compassEnabled(false);
+        options.ambientEnabled(false);
+
         mMap.setOnPolylineClickListener(this);
         Log.d(TAG, "Is it granted?");
 
@@ -208,6 +214,8 @@ public class MapsActivity extends FragmentActivity implements
             Log.d(TAG, "Permission granted?");
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(56,13.6), 16));
+
         } else  Log.d(TAG, "Permission not granted");
 
     }
