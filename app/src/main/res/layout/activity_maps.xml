@@ -19,8 +19,7 @@
 
 <RelativeLayout
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent">
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -36,6 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
+
 
 </RelativeLayout>
 
@@ -101,6 +101,16 @@
         android:layout_marginTop="60dp"
         android:onClick="clearRoute"
         android:src="@drawable/ic_clear_route" />
+
+    <Switch
+        android:layout_below="@id/searchBarLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue1"
+        android:id="@+id/switchBtn"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="100dp"
+        />
 
 </RelativeLayout>
 

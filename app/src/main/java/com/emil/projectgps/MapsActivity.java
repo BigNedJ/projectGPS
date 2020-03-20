@@ -232,7 +232,9 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+
+                Toast.makeText(getApplicationContext(),"Lat:"+lastLocation.getLatitude()+ "Long:"+ lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -366,10 +368,10 @@ public class MapsActivity extends FragmentActivity implements
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
 
         if (googleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+
         }
     }
 
