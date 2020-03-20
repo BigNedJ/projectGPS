@@ -82,8 +82,6 @@ public class MapsActivity extends FragmentActivity implements
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.blue1, R.color.gray1, R.color.gray1, R.color.gray1, R.color.gray1};
 
-    // R.color.primary_dark,R.color.primary,R.color.primary_light,R.color.accent, alternative route colors
-
     private GoogleMap mMap;
     private EditText searchText;
     private ImageView micImage;
@@ -95,13 +93,6 @@ public class MapsActivity extends FragmentActivity implements
     private ListView listView;
 
     private ArrayList<Route> routes;
-
-
-    // TODO write comments on the last programming
-    // TODO devide the code
-
-    //TODO make camare move to location but no marker until route is confirmed
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +115,6 @@ public class MapsActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
 
         polylines = new ArrayList<>();
-       // Log.d(TAG, "Last location Lat: "+lastLocation.getLatitude());
-        //Log.d(TAG, "Last location Long : "+lastLocation.getLongitude());
 
         centerView();
         textSearch();
@@ -208,7 +197,6 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
         mMap.setOnPolylineClickListener(this);
         Log.d(TAG, "Is it granted?");
 
@@ -236,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(13.0f));
             }
 
         });
@@ -265,6 +253,8 @@ public class MapsActivity extends FragmentActivity implements
 
 
     private void geoLocate() {
+        closeKeyboard();
+
         String searchString = searchText.getText().toString();
         Log.d(TAG, "Search string: "+searchString);
 
@@ -346,7 +336,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(latLng).title(title));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
 
         // add route
         getRouteToMarker(latLng);
@@ -358,8 +348,6 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        // closes the keyboard on start. may be moved to another place
-        closeKeyboard();
 
         lastLocation = location;
 
@@ -369,10 +357,8 @@ public class MapsActivity extends FragmentActivity implements
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        //TODO make camera work on start up (inti zoom)
-
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(6.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
 
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
