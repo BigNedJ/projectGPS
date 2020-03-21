@@ -19,9 +19,11 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements
     private static final int REQUEST_CODE = 101 ;
 
     FirebaseAuth firebaseAuth;
+    FirebaseFirestore firestore;
+    String currentUserId;
 
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -89,6 +97,8 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView micImage;
     private ImageView centerImage;
     private ImageView clearRouteImage;
+    private Switch shareLocationSwitch;
+    private  boolean shareLocationFlag;
 
     private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
     private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
@@ -100,6 +110,11 @@ public class MapsActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        firestore= FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+
+
+        Log.d(TAG, "onCreate: created");
 
         // submenu options
         listView = findViewById(R.id.listView);
@@ -110,6 +125,17 @@ public class MapsActivity extends FragmentActivity implements
         micImage = (ImageView) findViewById(R.id.micImage);
         centerImage = (ImageView) findViewById(R.id.centerImage);
         clearRouteImage = (ImageView) findViewById(R.id.centerImage);
+        shareLocationSwitch = findViewById(R.id.switchBtn);
+       // shareLocationFlag = false;
+
+        if(firebaseAuth.getCurrentUser()!=null){
+            currentUserId = firebaseAuth.getCurrentUser().getUid();
+            initSwitchBtn();
+        } else{
+            shareLocationSwitch.setVisibility(View.INVISIBLE);
+        }
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -122,6 +148,48 @@ public class MapsActivity extends FragmentActivity implements
         textSearch();
         getSpeechInput();
         changeActivity();
+
+    }
+
+    public void initSwitchBtn(){
+        shareLocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    Toast.makeText(getApplicationContext(), "Switch on", Toast.LENGTH_LONG).show();
+                    shareLocationFlag = true;
+                }else {
+                    Toast.makeText(getApplicationContext(), "Switch off", Toast.LENGTH_LONG).show();
+                    shareLocationFlag = false;
+                }
+            }
+        });
+    }
+    
+    public void updatePositionFirestore(Location location){
+        DocumentReference dR = firestore.collection("users").document(currentUserId);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+       // shareLocationFlag = false;
+        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (locationRequest==null) {
+           addLocationRequest();
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (googleApiClient != null && googleApiClient.isConnected())
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        }
+
     }
 
     private void closeKeyboard() {
@@ -359,7 +427,14 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
 
+
         lastLocation = location;
+        if (shareLocationFlag){
+            Log.d(TAG, "onLocationChanged: Lat: "+lastLocation.getLatitude() +" Long: "+ lastLocation.getLongitude());
+            Log.d(TAG, "onLocationChanged: Send location to database");
+        }else {
+            Log.d(TAG, "onLocationChanged: Lat: " + lastLocation.getLatitude() + " Long: " + lastLocation.getLongitude());
+        }
 
         if (currentUserLocationMarker != null) {
             currentUserLocationMarker.remove();
@@ -367,24 +442,31 @@ public class MapsActivity extends FragmentActivity implements
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
 
         if (googleApiClient != null) {
 
         }
     }
 
+    public void addLocationRequest(){
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-
         }
 
     }
