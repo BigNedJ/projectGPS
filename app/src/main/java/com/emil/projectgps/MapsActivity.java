@@ -54,16 +54,21 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -164,13 +169,46 @@ public class MapsActivity extends FragmentActivity implements
                 }else {
                     Toast.makeText(getApplicationContext(), "Switch off", Toast.LENGTH_LONG).show();
                     shareLocationFlag = false;
+                    setShareLocationFalseFirestore();
                 }
             }
         });
     }
+    public void setShareLocationFalseFirestore(){
+        DocumentReference dR = firestore.collection("users").document(currentUserId);
+        Map<String, Object> userShareLocFalse = new HashMap<>();
+        userShareLocFalse.put("shareLocation", false);
+        dR.set(userShareLocFalse, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "shareLoc: Success: ");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "shareLoc: Failure: ");
+            }
+        });
+
+    }
     
     public void updatePositionFirestore(Location location){
         DocumentReference dR = firestore.collection("users").document(currentUserId);
+        Map<String, Object> userPos = new HashMap<>();
+        userPos.put("lat", location.getLatitude());
+        userPos.put("long", location.getLongitude());
+        userPos.put("shareLocation", true);
+        dR.set(userPos, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "updatePositionFireStore: Success: Position added to database");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "updatePositionFireStore: Failure: Couldn't add position");
+            }
+        });
     }
 
     @Override
@@ -434,6 +472,7 @@ public class MapsActivity extends FragmentActivity implements
         if (shareLocationFlag){
             Log.d(TAG, "onLocationChanged: Lat: "+lastLocation.getLatitude() +" Long: "+ lastLocation.getLongitude());
             Log.d(TAG, "onLocationChanged: Send location to database");
+            updatePositionFirestore(lastLocation);
         }else {
             Log.d(TAG, "onLocationChanged: Lat: " + lastLocation.getLatitude() + " Long: " + lastLocation.getLongitude());
         }
@@ -473,8 +512,8 @@ public class MapsActivity extends FragmentActivity implements
             startUpConnection = false;
         }
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
