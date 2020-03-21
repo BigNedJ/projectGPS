@@ -100,6 +100,9 @@ public class MapsActivity extends FragmentActivity implements
     private Switch shareLocationSwitch;
     private  boolean shareLocationFlag;
 
+    private boolean startUpZoom = true;
+    private boolean startUpConnection = true;
+
     private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
     private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
     private ListView listView;
@@ -282,7 +285,7 @@ public class MapsActivity extends FragmentActivity implements
             Log.d(TAG, "Permission granted?");
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(56,13.6), 16));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(56,13.6), 14));
 
         } else  Log.d(TAG, "Permission not granted");
 
@@ -302,7 +305,6 @@ public class MapsActivity extends FragmentActivity implements
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
 
-                Toast.makeText(getApplicationContext(),"Lat:"+lastLocation.getLatitude()+ "Long:"+ lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -440,14 +442,16 @@ public class MapsActivity extends FragmentActivity implements
             currentUserLocationMarker.remove();
         }
 
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        // this method is only call once on start up to zoom in on user location
+        if (startUpZoom){
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
 
-        if (googleApiClient != null) {
-
+            startUpZoom = false;
         }
+
     }
 
     public void addLocationRequest(){
@@ -460,9 +464,17 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        if (startUpConnection){
+            locationRequest = new LocationRequest();
+            locationRequest.setInterval(100);
+            locationRequest.setFastestInterval(100);
+            locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+            startUpConnection = false;
+        }
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -556,7 +568,7 @@ public class MapsActivity extends FragmentActivity implements
 
         }
 
-        Toast.makeText(getApplicationContext(), "Route " + 1 + "\n" + route.get(0).getDistanceText() +
+        Toast.makeText(getApplicationContext(), "Fastest Route\n" + route.get(0).getDistanceText() +
                         "\n" + route.get(0).getDurationText()
                 , Toast.LENGTH_SHORT).show();
 
@@ -568,7 +580,6 @@ public class MapsActivity extends FragmentActivity implements
 
     }
 
-    // TODO make the lines go away when target reached
     private void erasePolylines() {
         for (Polyline line : polylines) {
             line.remove();
@@ -616,101 +627,3 @@ public class MapsActivity extends FragmentActivity implements
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
