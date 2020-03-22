@@ -3,6 +3,7 @@ package com.emil.projectgps;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -61,6 +62,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -70,6 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class MapsActivity extends FragmentActivity implements
@@ -106,8 +109,11 @@ public class MapsActivity extends FragmentActivity implements
     private Switch shareLocationSwitch;
     private  boolean shareLocationFlag;
 
-    private boolean startUpZoom = true;
+    private boolean startUpZoom;
     private boolean startUpConnection = true;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SWITCH = "switch";
+
 
     private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
     private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
@@ -119,7 +125,7 @@ public class MapsActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        firestore= FirebaseFirestore.getInstance();
+        firestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
 
@@ -135,15 +141,14 @@ public class MapsActivity extends FragmentActivity implements
         centerImage = (ImageView) findViewById(R.id.centerImage);
         clearRouteImage = (ImageView) findViewById(R.id.centerImage);
         shareLocationSwitch = findViewById(R.id.switchBtn);
-       // shareLocationFlag = false;
+        // shareLocationFlag = false;
 
-        if(firebaseAuth.getCurrentUser()!=null){
+        if (firebaseAuth.getCurrentUser() != null) {
             currentUserId = firebaseAuth.getCurrentUser().getUid();
             initSwitchBtn();
-        } else{
+        } else {
             shareLocationSwitch.setVisibility(View.INVISIBLE);
         }
-
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used
@@ -153,11 +158,55 @@ public class MapsActivity extends FragmentActivity implements
 
         polylines = new ArrayList<>();
 
-        centerView();
+       centerView();
         textSearch();
         getSpeechInput();
         changeActivity();
+        loadSwitchState();
 
+        startUpZoom= true;
+
+
+      /*  Intent intent = getIntent();
+
+      //  Bundle extras = getIntent().getExtras();
+       // if (extras != null) {
+            //Toast.makeText(this, "Bundle is not null", Toast.LENGTH_LONG).show();
+                //Log.d(TAG, "onCreate: extre bundless != null");
+                String userID = intent.getStringExtra("USER_ID");
+                String username = intent.getStringExtra("USER_NAME");
+
+                if (userID!=null && username!=null){
+                    showLocationOfFriendOnMap(userID, username);
+                }
+               // Toast.makeText(this, "UserID: " + userID + " Name: " + username, Toast.LENGTH_LONG).show();
+               // Log.d("MapsActivty On Create:", "ID " + userID + " Name: " + username);
+               // showLocationOfFriendOnMap(userID, username);
+                //The key argument here must match that used in the other activity
+       // }
+
+       */
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: destroyed");
+        saveSwitchState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startUpZoom= true;
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        startUpZoom= true;
     }
 
     public void initSwitchBtn(){
@@ -165,16 +214,33 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    Toast.makeText(getApplicationContext(), "Switch on", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Switch on", Toast.LENGTH_SHORT).show();
                     shareLocationFlag = true;
+
                 }else {
-                    Toast.makeText(getApplicationContext(), "Switch off", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Switch off", Toast.LENGTH_SHORT).show();
                     shareLocationFlag = false;
                     setShareLocationFalseFirestore();
                 }
             }
         });
     }
+    public void saveSwitchState(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(SWITCH, shareLocationSwitch.isChecked());
+
+        editor.apply();
+    }
+
+    public void loadSwitchState(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        boolean switchState = sharedPreferences.getBoolean(SWITCH,false);
+
+        shareLocationSwitch.setChecked(switchState);
+    }
+
+
     public void setShareLocationFalseFirestore(){
         DocumentReference dR = firestore.collection("users").document(currentUserId);
         Map<String, Object> userShareLocFalse = new HashMap<>();
@@ -212,25 +278,58 @@ public class MapsActivity extends FragmentActivity implements
         });
     }
 
+    public void showLocationOfFriendOnMap(String userID, final String username){
+        DocumentReference dR = firestore.collection("users").document(userID);
+        dR.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                double lat = documentSnapshot.getDouble("lat");
+                double longitude = documentSnapshot.getDouble("long");
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, longitude)));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+                mMap.addMarker(new MarkerOptions().position(new LatLng(lat,longitude)).title(username));
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: showLocationOfFriendOnMap");
+            }
+        });
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
        // shareLocationFlag = false;
+        Log.d(TAG, "onStop: ");
+        saveSwitchState();
         LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        startUpZoom= true;
+
         if (locationRequest==null) {
            addLocationRequest();
+            Log.d(TAG, "onStart: locaionrequestt null");
         }
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            if (googleApiClient != null && googleApiClient.isConnected())
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            if (googleApiClient != null && googleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+                Log.d(TAG, "onStart: client is connected and googleapiclient= not null");
+            }
         }
+
+
+
+
 
     }
 
@@ -308,6 +407,7 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Log.d(TAG, "onMapReady: ");
 
         GoogleMapOptions options = new GoogleMapOptions();
         options.compassEnabled(false);
@@ -323,10 +423,12 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Permission granted?");
+            Log.d(TAG, "Permission granted");
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
+
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(56,13.6), 14));
+
 
         } else  Log.d(TAG, "Permission not granted");
 
@@ -343,8 +445,10 @@ public class MapsActivity extends FragmentActivity implements
         centerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+                if (lastLocation!=null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+                } else Toast.makeText(getApplicationContext(), "Current location not available. Try turning GPS on", Toast.LENGTH_LONG).show();
 
             }
 
@@ -473,9 +577,9 @@ public class MapsActivity extends FragmentActivity implements
 
         lastLocation = location;
         if (shareLocationFlag){
-            Log.d(TAG, "onLocationChanged: Lat: "+lastLocation.getLatitude() +" Long: "+ lastLocation.getLongitude());
             Log.d(TAG, "onLocationChanged: Send location to database");
             updatePositionFirestore(lastLocation);
+
         }else {
             Log.d(TAG, "onLocationChanged: Lat: " + lastLocation.getLatitude() + " Long: " + lastLocation.getLongitude());
         }
@@ -486,10 +590,19 @@ public class MapsActivity extends FragmentActivity implements
 
         // this method is only call once on start up to zoom in on user location
         if (startUpZoom){
+            Log.d(TAG, "onLocationChanged: start up zoom: lat"+ location.getLatitude() +"Long: "+ location.getLongitude());
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+            Intent intent = getIntent();
+            String userID = intent.getStringExtra("USER_ID");
+            String username = intent.getStringExtra("USER_NAME");
+
+            if (userID!=null && username!=null){
+                showLocationOfFriendOnMap(userID, username);
+            }else {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+            }
 
             startUpZoom = false;
         }
@@ -498,14 +611,16 @@ public class MapsActivity extends FragmentActivity implements
 
     public void addLocationRequest(){
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
+        Log.d(TAG, "onConnected and onstart: true");
         if (startUpConnection){
             locationRequest = new LocationRequest();
             locationRequest.setInterval(100);
@@ -515,9 +630,11 @@ public class MapsActivity extends FragmentActivity implements
             startUpConnection = false;
         }
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
