@@ -102,6 +102,7 @@ public class MapsActivity extends FragmentActivity implements
     private LocationRequest locationRequest;
     private Location lastLocation;
     private Marker currentUserLocationMarker;
+    private LatLng markerLatLong;
 
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.blue1, R.color.gray1, R.color.gray1, R.color.gray1, R.color.gray1};
@@ -110,11 +111,13 @@ public class MapsActivity extends FragmentActivity implements
     private EditText searchText;
     private ImageView micImage;
     private ImageView centerImage;
+    private TextView currentSpeed;
     private ImageView clearRouteImage;
     private Switch shareLocationSwitch;
     private  boolean shareLocationFlag;
 
     private boolean startUpZoom;
+    private boolean startUpZoom2 = true;
     private boolean startUpConnection = true;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SWITCH = "switch";
@@ -125,6 +128,9 @@ public class MapsActivity extends FragmentActivity implements
     private ListView listView;
 
     private ArrayList<Route> routes;
+
+
+    // TODO UI delete centerview
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +147,7 @@ public class MapsActivity extends FragmentActivity implements
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 loggedInMenuList));
 
+        currentSpeed = findViewById(R.id.speedTextView);
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
         centerImage = (ImageView) findViewById(R.id.centerImage);
@@ -482,9 +489,12 @@ public class MapsActivity extends FragmentActivity implements
         mMap = googleMap;
         Log.d(TAG, "onMapReady: ");
 
+        mMap.setPadding(150,180,-100,0);
         GoogleMapOptions options = new GoogleMapOptions();
-        options.compassEnabled(false);
-        options.ambientEnabled(false);
+        options.compassEnabled(true);
+        options.zoomControlsEnabled(true);
+        //options.ambientEnabled(false);
+
 
         mMap.setOnPolylineClickListener(this);
         Log.d(TAG, "Is it granted?");
@@ -631,14 +641,51 @@ public class MapsActivity extends FragmentActivity implements
 
     // method remove the old marker and sets the new marker position and moves the camera
     public void moveCamera(LatLng latLng, String title) {
+        markerLatLong = latLng;
+
+        float[] results = new float[1];
+        Location.distanceBetween(lastLocation.getLatitude(),lastLocation.getLongitude(),
+                latLng.latitude,latLng.longitude,results);
+        int distance = (int) results[0] / 1000; // result in metric mil
+
+        //Toast.makeText(getApplicationContext(),"val: " + distance, Toast.LENGTH_SHORT).show();
+        float zoomTo = 6.0f;
+        if (distance < 20){
+            zoomTo = 9.5f;
+        }
+       else if (distance < 40){
+           zoomTo = 8.5f;
+       }
+       else if (distance < 60){
+          zoomTo = 8.0f;
+        }
+        else if (distance < 80){
+            zoomTo = 7.8f;
+       }
+        else if (distance < 100){
+            zoomTo = 7.5f;
+        }
         mMap.clear();
         mMap.addMarker(new MarkerOptions().position(latLng).title(title));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(zoomTo));
 
         // add route
         getRouteToMarker(latLng);
 
+    }
+
+    // clear the route if destination is less den 25m from user location
+    public void atDestination(){
+        float[] results = new float[1];
+        Location.distanceBetween(lastLocation.getLatitude(),lastLocation.getLongitude(),
+                markerLatLong.latitude,markerLatLong.longitude,results);
+        int distance = (int) results[0]; // result in meter
+
+        if (distance <= 25){
+            erasePolylines();
+            mMap.clear();
+        }
     }
 
 
@@ -647,8 +694,16 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
 
+        if (polylines.size() > 0){
+            atDestination();
+        }
+
+        // current speed
+        int speed = (int) location.getSpeed();
+        currentSpeed.setText(speed + " Km/h");
 
         lastLocation = location;
+
         if (shareLocationFlag){
             Log.d(TAG, "onLocationChanged: Send location to database");
             updatePositionFirestore(lastLocation);
@@ -673,11 +728,19 @@ public class MapsActivity extends FragmentActivity implements
             if (userID!=null && username!=null){
                 showLocationOfFriendOnMap(userID, username);
             }else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                //mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
             }
 
             startUpZoom = false;
+        }
+
+        if (startUpZoom2){
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+
+            startUpZoom2 = false;
         }
 
     }
