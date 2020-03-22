@@ -56,19 +56,24 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -115,8 +120,8 @@ public class MapsActivity extends FragmentActivity implements
     public static final String SWITCH = "switch";
 
 
-    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Settings", "About The App", "Sign Out"};
-    private String[] guestMenuList = {"Settings", "About The App", "Sign in"};
+    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Show friends on map", "About The App", "Sign Out"};
+    private String[] guestMenuList = { "About The App", "Sign in"};
     private ListView listView;
 
     private ArrayList<Route> routes;
@@ -299,6 +304,75 @@ public class MapsActivity extends FragmentActivity implements
         });
     }
 
+    public void showAllFriendsOnMap(){
+        final List<UsernameAndID> list = new ArrayList<>();
+        final Map<String, LatLng> friendPosMap = new HashMap<>();
+        final List<String> friendNames;
+
+        firestore.collection("users").document(currentUserId).collection("Friends")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                String name = (String)document.get("friend");
+                                String userID = document.getId();
+                                list.add(new UsernameAndID(name, userID));
+                            }
+                            CollectionReference cR = firestore.collection("users");
+                            cR.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                           // Log.d(TAG, document.getId() + " => " + document.getData());
+                                            String name = (String)document.get("Username");
+                                            String userID = document.getId();
+                                            for (UsernameAndID usi:list) {
+                                                if (usi.getId().equals(userID)){
+                                                    boolean isSharing = (boolean)document.get("shareLocation");
+                                                    Log.d(TAG, name + " exists in friends ");
+                                                    if (isSharing) {
+
+                                                        double lat = (double) document.get("lat");
+                                                        double longitude = (double) document.get("long");
+                                                        LatLng latLng = new LatLng(lat, longitude);
+                                                        friendPosMap.put(name, latLng);
+                                                    }
+                                            }
+                                           }
+                                            }
+
+                                        if (!friendPosMap.isEmpty()){
+                                            Log.d(TAG, "users are sharing their pos");
+                                          for (Map.Entry<String, LatLng> entry: friendPosMap.entrySet()){
+                                              putMarkerOnMap(entry.getValue(), entry.getKey());
+                                          }
+
+                                        }else  {
+                                            Log.d(TAG, "No users are sharing their pos");
+                                            Toast.makeText(MapsActivity.this, "No friends are currently sharing their position", Toast.LENGTH_LONG).show();
+                                        }
+
+                                           // list.add(new UsernameAndID(name, userID));
+                                        }
+                                }
+                            });
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
+    public void putMarkerOnMap(LatLng latLng, String title){
+        mMap.addMarker(new MarkerOptions().position(latLng).title(title));
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -364,7 +438,8 @@ public class MapsActivity extends FragmentActivity implements
                         startActivity(new Intent(getApplicationContext(),FriendList.class));
                     }
                     if (position == 3) {
-                        // Settings
+                        // showFriends
+                        showAllFriendsOnMap();
                     }
                     if (position == 4) {
                         // About The App
@@ -386,14 +461,12 @@ public class MapsActivity extends FragmentActivity implements
                                         int position, long id) {
                     // Example to change activity
                     // startActivity(new Intent(getApplicationContext(),Login.class));
+
                     if (position == 0) {
-                        // Settings
-                    }
-                    if (position == 1) {
                         // About us
                         startActivity(new Intent(getApplicationContext(),AboutUsActivity.class));
                     }
-                    if (position == 2) {
+                    if (position == 1) {
                         // Sign in
                         startActivity(new Intent(getApplicationContext(),LoginActivity.class));
                     }
