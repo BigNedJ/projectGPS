@@ -112,7 +112,6 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView micImage;
     private ImageView centerImage;
     private TextView currentSpeed;
-    private ImageView clearRouteImage;
     private Switch shareLocationSwitch;
     private  boolean shareLocationFlag;
 
@@ -129,8 +128,6 @@ public class MapsActivity extends FragmentActivity implements
 
     private ArrayList<Route> routes;
 
-
-    // TODO UI delete centerview
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,8 +147,7 @@ public class MapsActivity extends FragmentActivity implements
         currentSpeed = findViewById(R.id.speedTextView);
         searchText = (EditText) findViewById(R.id.inputSearch);
         micImage = (ImageView) findViewById(R.id.micImage);
-        centerImage = (ImageView) findViewById(R.id.centerImage);
-        clearRouteImage = (ImageView) findViewById(R.id.centerImage);
+        //centerImage = (ImageView) findViewById(R.id.centerImage);
         shareLocationSwitch = findViewById(R.id.switchBtn);
         // shareLocationFlag = false;
 
@@ -170,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements
 
         polylines = new ArrayList<>();
 
-       centerView();
+        //centerView();
         textSearch();
         getSpeechInput();
         changeActivity();
@@ -489,7 +485,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap = googleMap;
         Log.d(TAG, "onMapReady: ");
 
-        mMap.setPadding(150,180,-100,0);
+        mMap.setPadding(150,180,0,0);
         GoogleMapOptions options = new GoogleMapOptions();
         options.compassEnabled(true);
         options.zoomControlsEnabled(true);
@@ -524,20 +520,20 @@ public class MapsActivity extends FragmentActivity implements
         mMap.clear();
     }
 
-    public void centerView() {
-        centerImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (lastLocation!=null) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
-                } else Toast.makeText(getApplicationContext(), "Current location not available. Try turning GPS on", Toast.LENGTH_LONG).show();
-
-            }
-
-        });
-
-    }
+//    public void centerView() {
+//        centerImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (lastLocation!=null) {
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude())));
+//                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
+//                } else Toast.makeText(getApplicationContext(), "Current location not available. Try turning GPS on", Toast.LENGTH_LONG).show();
+//
+//            }
+//
+//        });
+//
+//    }
 
     // method checks if the enter button has been pressed
     public void textSearch() {
@@ -648,9 +644,11 @@ public class MapsActivity extends FragmentActivity implements
                 latLng.latitude,latLng.longitude,results);
         int distance = (int) results[0] / 1000; // result in metric mil
 
-        //Toast.makeText(getApplicationContext(),"val: " + distance, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"val: " + distance, Toast.LENGTH_SHORT).show();
         float zoomTo = 6.0f;
-        if (distance < 20){
+        if (distance < 10){
+            zoomTo = 12.0f;
+        }else if (distance < 20){
             zoomTo = 9.5f;
         }
        else if (distance < 40){
