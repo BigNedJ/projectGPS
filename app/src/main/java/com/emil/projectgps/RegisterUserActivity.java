@@ -65,7 +65,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 final String mUsername=userName.getText().toString().trim();
                 final double mlat=0;
                 final double mlong=0;
-                final Boolean shareLocation=false;
+                final boolean shareLocation=false;
 
                 if (TextUtils.isEmpty(mail)){
                     email.setError("Email is required.");
