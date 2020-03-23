@@ -478,6 +478,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     if (position == 1) {
                         // Nearby Places
+                        displayNearbyPlaces();
 
                     }
                     if (position == 2) {
