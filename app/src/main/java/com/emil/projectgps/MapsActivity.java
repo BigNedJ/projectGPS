@@ -639,12 +639,13 @@ public class MapsActivity extends FragmentActivity implements
     public void moveCamera(LatLng latLng, String title) {
         markerLatLong = latLng;
 
+        // calculate the distance between marker an user position
         float[] results = new float[1];
         Location.distanceBetween(lastLocation.getLatitude(),lastLocation.getLongitude(),
                 latLng.latitude,latLng.longitude,results);
         int distance = (int) results[0] / 1000; // result in metric mil
 
-        Toast.makeText(getApplicationContext(),"val: " + distance, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"val: " + distance, Toast.LENGTH_SHORT).show();
         float zoomTo = 6.0f;
         if (distance < 10){
             zoomTo = 12.0f;
