@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".FriendList">
+    tools:context=".FriendList"
+    android:background="@drawable/gradient">
 
     <TextView
         android:layout_width="wrap_content"
