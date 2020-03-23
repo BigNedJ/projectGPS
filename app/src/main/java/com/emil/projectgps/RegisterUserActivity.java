@@ -63,8 +63,9 @@ public class RegisterUserActivity extends AppCompatActivity {
                 final String mail=email.getText().toString().trim();
                 String lösenord=password.getText().toString().trim();
                 final String mUsername=userName.getText().toString().trim();
-                final String mlat=null;
-                final String mlong=null;
+                final double mlat=0;
+                final double mlong=0;
+                final Boolean shareLocation=false;
 
                 if (TextUtils.isEmpty(mail)){
                     email.setError("Email is required.");
@@ -95,6 +96,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                             user.put("Email",mail);
                             user.put("lat",mlat);
                             user.put("long",mlong);
+                            user.put("sharedLocation",shareLocation);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
