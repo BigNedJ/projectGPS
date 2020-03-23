@@ -122,8 +122,8 @@ public class MapsActivity extends FragmentActivity implements
     public static final String SWITCH = "switch";
 
 
-    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Show friends on map", "About The App", "Sign Out"};
-    private String[] guestMenuList = { "About The App", "Sign in"};
+    private String[] loggedInMenuList = {"Add Friends", "Chat With Friends","View Friends", "Show Friends On Map","Nearby Places", "About The App", "Sign Out"};
+    private String[] guestMenuList = { "About The App","Nearby Places", "Sign In"};
     private ListView listView;
 
     private ArrayList<Route> routes;
@@ -445,10 +445,14 @@ public class MapsActivity extends FragmentActivity implements
                         showAllFriendsOnMap();
                     }
                     if (position == 4) {
+                        // Nearby Places
+
+                    }
+                    if (position == 5) {
                         // About The App
                         startActivity(new Intent(getApplicationContext(), AboutUsActivity.class));
                     }
-                    if (position == 5) {
+                    if (position == 6) {
                         // Sign Out
                        FirebaseAuth.getInstance().signOut();
                        finish();
@@ -470,6 +474,10 @@ public class MapsActivity extends FragmentActivity implements
                         startActivity(new Intent(getApplicationContext(),AboutUsActivity.class));
                     }
                     if (position == 1) {
+                        // Nearby Places
+
+                    }
+                    if (position == 2) {
                         // Sign in
                         startActivity(new Intent(getApplicationContext(),LoginActivity.class));
                     }
@@ -652,15 +660,15 @@ public class MapsActivity extends FragmentActivity implements
         }else if (distance < 20){
             zoomTo = 9.5f;
         }
-       else if (distance < 40){
+        else if (distance < 40){
            zoomTo = 8.5f;
-       }
-       else if (distance < 60){
+        }
+        else if (distance < 60){
           zoomTo = 8.0f;
         }
         else if (distance < 80){
             zoomTo = 7.8f;
-       }
+        }
         else if (distance < 100){
             zoomTo = 7.5f;
         }
