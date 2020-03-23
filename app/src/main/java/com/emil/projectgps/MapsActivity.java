@@ -90,6 +90,7 @@ public class MapsActivity extends FragmentActivity implements
 
     private static final String TAG = "SearchActivity";
     private static final int REQUEST_CODE = 101 ;
+    int PROXIMITY_RADIUS = 10000;
 
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firestore;
@@ -103,6 +104,7 @@ public class MapsActivity extends FragmentActivity implements
     private Location lastLocation;
     private Marker currentUserLocationMarker;
     private LatLng markerLatLong;
+    double latitude,longitude;
 
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.blue1, R.color.gray1, R.color.gray1, R.color.gray1, R.color.gray1};
@@ -446,6 +448,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     if (position == 4) {
                         // Nearby Places
+                        displayNearbyPlaces();
 
                     }
                     if (position == 5) {
@@ -701,6 +704,9 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
 
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
         if (polylines.size() > 0){
             atDestination();
         }
@@ -928,4 +934,60 @@ public class MapsActivity extends FragmentActivity implements
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Display nearby places
+
+    public void displayNearbyPlaces() {
+
+        Object dataTransfer[] = new Object[2];
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        String url;
+
+        String hospital = "hospital";
+        url = getUrl(latitude, longitude, hospital);
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        getNearbyPlacesData.execute(dataTransfer);
+        Toast.makeText(MapsActivity.this, "Showing Nearby Hospitals", Toast.LENGTH_SHORT).show();
+/*
+
+        String school = "school";
+        url = getUrl(latitude, longitude, school);
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        getNearbyPlacesData.execute(dataTransfer);
+        Toast.makeText(MapsActivity.this, "Showing Nearby Schools", Toast.LENGTH_SHORT).show();
+
+
+        String restaurant = "restaurant";
+        url = getUrl(latitude, longitude, restaurant);
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        getNearbyPlacesData.execute(dataTransfer);
+        Toast.makeText(MapsActivity.this, "Showing Nearby Restaurants", Toast.LENGTH_SHORT).show();
+
+ */
+
+    }
+
+    private String getUrl(double latitude , double longitude , String nearbyPlace)
+    {
+
+        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location="+latitude+","+longitude);
+        googlePlaceUrl.append("&radius="+PROXIMITY_RADIUS);
+        googlePlaceUrl.append("&type="+nearbyPlace);
+        googlePlaceUrl.append("&sensor=true");
+        //Byta API key
+        //Bytad
+        googlePlaceUrl.append("&key="+"AIzaSyCOrnaEDRPY9t2mwxCdtZuPhGEZdAcoowQ");
+
+        Log.d("MapsActivity", "url = "+googlePlaceUrl.toString());
+
+        return googlePlaceUrl.toString();
+    }
 }

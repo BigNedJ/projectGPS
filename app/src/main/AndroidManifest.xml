@@ -19,9 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AboutUsActivity"></activity>
-        <activity android:name=".AddNewFriend"></activity>
-        <activity android:name=".FriendList"></activity>
+        <activity android:name=".AboutUsActivity" />
+        <activity android:name=".AddNewFriend" />
+        <activity android:name=".FriendList" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterUserActivity" />
         <!--
@@ -38,8 +38,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
