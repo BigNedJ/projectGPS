@@ -26,9 +26,7 @@
         <activity android:name=".FriendList" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterUserActivity" />
-        <activity
-            android:name=".MainActivity"
-            android:parentActivityName=".MapsActivity" />
+        <activity android:name=".MainActivity"/>
         <activity android:name=".MessageActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
