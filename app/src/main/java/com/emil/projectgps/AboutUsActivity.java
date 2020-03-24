@@ -42,7 +42,7 @@ public class AboutUsActivity extends AppCompatActivity {
                 "\n\n" +
                 "We hope that you like our application called PseudoMaps," +
                 "\n\n\nGreetings\n\n" +
-                "Nedim, Bamlak, Emil, Jimmie and Petar");
+                "Nedim, Emil, Jimmie and Petar");
 
     }
 }
