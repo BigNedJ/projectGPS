@@ -8,9 +8,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+
 public class AboutUsActivity extends AppCompatActivity {
     TextView textViewAboutUs;
     Button back;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

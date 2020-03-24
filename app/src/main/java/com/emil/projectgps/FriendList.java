@@ -12,11 +12,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FriendList extends AppCompatActivity {
@@ -32,6 +35,8 @@ public class FriendList extends AppCompatActivity {
     FirebaseFirestore firestore;
     FirebaseAuth firebaseAuth;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +49,6 @@ public class FriendList extends AppCompatActivity {
        // recyclerAdapter = new RecyclerAdapter(list);
         //recyclerView.setHasFixedSize(true);
         //recyclerView.setAdapter(recyclerAdapter);
-
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -74,9 +78,5 @@ public class FriendList extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-
     }
 }

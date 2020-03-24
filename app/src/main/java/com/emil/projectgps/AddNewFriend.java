@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,6 +39,7 @@ public class AddNewFriend extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseFirestore db;
     FirebaseUser firebaseUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,5 +136,4 @@ public class AddNewFriend extends AppCompatActivity {
         });
         Log.d(TAG, "Docsnap created");
     }
-
 }
